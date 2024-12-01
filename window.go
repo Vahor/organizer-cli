@@ -15,7 +15,7 @@ func (t ListEntry) FilterValue() string {
 
 func (t ListEntry) Title() string {
 	if t.Position > 0 {
-		return strconv.Itoa(t.Position) + " - " + t.title
+		return "(" + strconv.Itoa(t.Position) + ") " + t.title
 	}
 	return t.title
 }

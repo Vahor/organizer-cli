@@ -1,21 +1,17 @@
 package main
 
-import "github.com/charmbracelet/bubbles/key"
+import "github.com/charmbracelet/bubbles/v2/key"
 
-// ShortHelp returns keybindings to be shown in the mini help view. It's part
-// of the key.Map interface.
 func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Esc, k.Enter}
+	return []key.Binding{}
 }
 
-// FullHelp returns keybindings for the expanded help view. It's part of the
-// key.Map interface.
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		{k.Up, k.Down},     // first column
 		{k.Quit, k.Reload}, // second column
 		{k.Delete, k.Edit}, // 3 column
-		{k.Filter},         // 4 column
+		{k.Enable},         // 4 column
 	}
 }
 
@@ -24,11 +20,9 @@ type keyMap struct {
 	Down   key.Binding
 	Delete key.Binding
 	Reload key.Binding
-	Enter  key.Binding
-	Esc    key.Binding
+	Enable key.Binding
 	Quit   key.Binding
 	Edit   key.Binding
-	Filter key.Binding
 }
 
 var keys = keyMap{
@@ -56,17 +50,9 @@ var keys = keyMap{
 		key.WithKeys("1", "2", "3", "4", "5", "6", "7", "8", "9"),
 		key.WithHelp("[0-9]", "edit"),
 	),
-	Esc: key.NewBinding(
-		key.WithKeys("esc"),
-		key.WithHelp("esc", "back"),
-	),
-	Enter: key.NewBinding(
-		key.WithKeys("enter"),
-		key.WithHelp("enter", "submit"),
-	),
-	Filter: key.NewBinding(
-		key.WithKeys("/"),
-		key.WithHelp("/", "filter"),
+	Enable: key.NewBinding(
+		key.WithKeys("e"),
+		key.WithHelp("e", "enable"),
 	),
 }
 

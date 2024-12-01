@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"os/exec"
 	"regexp"
 	"sort"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/bubbles/v2/list"
 )
 
 func listWindowNames() ([]string, error) {
@@ -42,7 +44,11 @@ func formatToListEntry(windows []string) []list.Item {
 	r := regexp.MustCompile(`^(.*) \((.*)\)$`)
 	for _, w := range windows {
 		parts := r.FindStringSubmatch(w)
-		entries = append(entries, ListEntry{title: parts[1], app: parts[2]})
+		if len(parts) != 3 {
+			continue
+		}
+		entries = append(entries, ListEntry{
+			title: parts[1], app: parts[2]})
 	}
 
 	// sort by app name
@@ -56,4 +62,28 @@ func formatToListEntry(windows []string) []list.Item {
 		listEntries = append(listEntries, e)
 	}
 	return listEntries
+}
+
+func focusWindow(entry ListEntry) error {
+	script := fmt.Sprintf(`
+tell application "System Events"
+	tell process "%s"
+		repeat with w in windows
+			try
+				if name of w contains "%s" then
+					set frontmost to true
+					return true
+				end if
+			end try
+		end repeat
+	end tell
+end tell`, entry.app, entry.title)
+	cmd := exec.Command("osascript", "-e", script)
+	log.Println("Focusing window:", entry)
+	_, err := cmd.Output()
+	if err != nil {
+		log.Println("Error focusing window:", err)
+		return err
+	}
+	return nil
 }
